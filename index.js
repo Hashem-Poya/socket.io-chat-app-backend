@@ -7,8 +7,15 @@ app.use(cors());
 
 const io = require('socket.io')(http, { cors: { origin: '*' } });
 
+let users = [];
+
 io.on('connection', (socket) => {
   console.log(`${socket.id} user connected.`);
+
+  socket.on('newUser', (user) => {
+    users.push(user);
+    io.emit('newUserResponse', users);
+  });
 
   socket.on('userTyping', (username) => {
     io.broadcast.emit('userTypingResponse', username);
@@ -20,6 +27,8 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     console.log(`${socket.id} user disconnected.`);
+    users = users.filter((user) => user.socketId !== socket.id);
+    io.emit('newUserResponse', users);
   });
 });
 
