@@ -18,8 +18,10 @@ io.on('connection', (socket) => {
     io.emit('newUserResponse', users);
   });
 
-  socket.on('userTyping', (user) => {
-    socket.broadcast.emit('userTypingResponse', user);
+  socket.on('userTyping', (typingStatus) => {
+    if (typingStatus.isTyping)
+      socket.broadcast.emit('userTypingResponse', typingStatus.user);
+    else socket.broadcast.emit('userTypingResponse', '');
   });
 
   socket.on('message', (data) => {
