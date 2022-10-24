@@ -10,9 +10,13 @@ const io = require('socket.io')(http, { cors: { origin: '*' } });
 io.on('connection', (socket) => {
   console.log(`${socket.id} user connected.`);
 
-  setInterval(() => {
-    socket.emit('msg', { data: [1, 2, 3] });
-  }, 5000);
+  socket.on('userTyping', (username) => {
+    io.broadcast.emit('userTypingResponse', username);
+  });
+
+  socket.on('message', (data) => {
+    io.emit('messageResponse', data);
+  });
 
   socket.on('disconnect', () => {
     console.log(`${socket.id} user disconnected.`);
