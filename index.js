@@ -13,12 +13,13 @@ io.on('connection', (socket) => {
   console.log(`${socket.id} user connected.`);
 
   socket.on('newUser', (user) => {
+    console.log(`${user.socketId} ${user.username} joined room.`);
     users.push(user);
     io.emit('newUserResponse', users);
   });
 
-  socket.on('userTyping', (username) => {
-    io.broadcast.emit('userTypingResponse', username);
+  socket.on('userTyping', (user) => {
+    socket.broadcast.emit('userTypingResponse', user);
   });
 
   socket.on('message', (data) => {
